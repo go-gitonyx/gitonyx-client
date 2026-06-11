@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-base: #030912;
+  --color-surface: #0a1322;
+  --color-primary: #00b2ff;
+  --color-accent: #8b5cf6;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --font-sans: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+  }
+
+  body {
+    background: var(--color-base);
+    color: #e2e8f0;
+    font-family: var(--font-sans);
+    overflow: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 178, 255, 0.2);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 178, 255, 0.4);
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--color-line);
+  }
+
+  .glow-bg {
+    background:
+      radial-gradient(ellipse 60% 40% at 15% 0%, rgba(0, 178, 255, 0.12), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 90% 100%, rgba(139, 92, 246, 0.1), transparent 60%),
+      var(--color-base);
+  }
+}
