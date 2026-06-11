@@ -69,7 +69,7 @@ function BranchMenu({ branch, branches, ahead, behind, loading, onCheckout }: { 
         <>
           <div className="fixed inset-0 z-9999" onClick={() => setOpen(false)} />
 
-          <div className="absolute left-0 top-full mt-2 z-20 w-72 max-h-80 overflow-y-auto rounded-xl bg-surface border border-line shadow-2xl py-1">
+          <div className="absolute left-0 top-full mt-2 z-9998 w-72 max-h-80 overflow-y-auto rounded-xl bg-surface border border-line shadow-2xl py-1">
             <MenuLabel label="Local branches" />
             {locals.length === 0 && <p className="px-3 py-1.5 text-sm text-slate-600">No local branches.</p>}
             {locals.map((b) => (
@@ -109,7 +109,7 @@ export function Header({ repoPath, branch, branches, ahead, behind, loading, aut
   const repoName = repoPath.split(/[\\/]/).filter(Boolean).pop() ?? repoPath
 
   return (
-    <header className="glass rounded-xl px-4 py-3 flex items-center gap-4">
+    <header className="relative z-10 glass rounded-xl px-4 py-3 flex items-center gap-4">
       <button
         type="button"
         onClick={onClose}

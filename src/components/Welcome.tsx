@@ -1,18 +1,10 @@
 import { Icon } from '@iconify/react'
 
 interface WelcomeProps {
-  onOpen: (path: string) => void
+  onOpen: () => void
 }
 
 export function Welcome({ onOpen }: WelcomeProps) {
-  const pick = async () => {
-    const path = await window.gitBridge.selectRepo()
-
-    if (!path) return
-
-    onOpen(path)
-  }
-
   return (
     <div className="h-full flex flex-col items-center justify-center gap-6">
       <div className="glass rounded-2xl p-10 flex flex-col items-center gap-5 max-w-md text-center">
@@ -27,7 +19,7 @@ export function Welcome({ onOpen }: WelcomeProps) {
 
         <button
           type="button"
-          onClick={pick}
+          onClick={onOpen}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-base font-semibold text-[#030912] hover:bg-primary/85 transition-colors cursor-pointer"
         >
           <Icon icon="mdi:folder-open-outline" className="text-lg" />

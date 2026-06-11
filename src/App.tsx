@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react'
 import { useGit } from './hooks/useGit'
 import { FileChange, Commit, Branch } from './git/models'
 import type { GitResult } from '../electron/git'
+import type { Project } from './types/git'
 import { Welcome } from './components/Welcome'
 import { Header } from './components/Header'
 import { ChangesPanel } from './components/ChangesPanel'
@@ -205,13 +206,112 @@ function TabButton({ active, onClick, icon, children }: { active: boolean; onCli
   )
 }
 
+function ProjectTabBar({
+  projects,
+  activeId,
+  onSelect,
+  onClose,
+  onNew,
+}: {
+  projects: Project[]
+  activeId: string | null
+  onSelect: (id: string) => void
+  onClose: (id: string) => void
+  onNew: () => void
+}) {
+  return (
+    <div className="flex items-end gap-0.5 px-2 pt-1.5 shrink-0 border-b border-line">
+      {projects.map((p) => (
+        <div
+          key={p.id}
+          onClick={() => onSelect(p.id)}
+          className={`group relative flex items-center gap-1.5 px-3 py-1.5 rounded-t-lg text-xs cursor-pointer transition-colors select-none max-w-45 border border-b-0 -mb-px ${
+            p.id === activeId
+              ? 'bg-surface border-line text-white z-10'
+              : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
+          }`}
+        >
+          <Icon icon="mdi:source-branch" className="text-accent shrink-0" />
+          <span className="truncate min-w-0 font-medium">{p.name}</span>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onClose(p.id) }}
+            className="shrink-0 size-3.5 flex items-center justify-center rounded text-slate-500 hover:text-white hover:bg-white/15 opacity-0 group-hover:opacity-100 transition-opacity ml-0.5 cursor-pointer"
+          >
+            <Icon icon="mdi:close" className="text-[10px]" />
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={onNew}
+        title="Open repository"
+        className="mb-0.5 ml-1 size-6 flex items-center justify-center rounded text-slate-500 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+      >
+        <Icon icon="mdi:plus" className="text-base" />
+      </button>
+    </div>
+  )
+}
+
 function App() {
-  const [repoPath, setRepoPath] = useState<string | null>(null)
+  const [projects, setProjects] = useState<Project[]>([])
+  const [activeId, setActiveId] = useState<string | null>(null)
+
+  useEffect(() => {
+    window.gitBridge.loadProjects().then((loaded) => {
+      setProjects(loaded)
+      if (loaded.length > 0) setActiveId(loaded[loaded.length - 1].id)
+    })
+  }, [])
+
+  const persistProjects = (next: Project[]) => {
+    setProjects(next)
+    window.gitBridge.saveProjects(next)
+  }
+
+  const openRepo = async () => {
+    const repoPath = await window.gitBridge.selectRepo()
+    if (!repoPath) return
+
+    const existing = projects.find((p) => p.path === repoPath)
+    if (existing) {
+      setActiveId(existing.id)
+      return
+    }
+
+    const name = repoPath.split(/[\\/]/).filter(Boolean).pop() ?? repoPath
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2)
+    const project: Project = { id, path: repoPath, name }
+    persistProjects([...projects, project])
+    setActiveId(id)
+  }
+
+  const closeProject = (id: string) => {
+    const next = projects.filter((p) => p.id !== id)
+    persistProjects(next)
+    if (activeId === id) {
+      setActiveId(next.length > 0 ? next[next.length - 1].id : null)
+    }
+  }
+
+  const activeProject = projects.find((p) => p.id === activeId) ?? null
 
   return (
-    <div className="h-full glow-bg">
-      {!repoPath && <Welcome onOpen={setRepoPath} />}
-      {repoPath && <Workspace repoPath={repoPath} onClose={() => setRepoPath(null)} />}
+    <div className="h-full glow-bg flex flex-col">
+      <ProjectTabBar
+        projects={projects}
+        activeId={activeId}
+        onSelect={setActiveId}
+        onClose={closeProject}
+        onNew={openRepo}
+      />
+      <div className="flex-1 min-h-0">
+        {activeProject
+          ? <Workspace key={activeProject.id} repoPath={activeProject.path} onClose={() => closeProject(activeProject.id)} />
+          : <Welcome onOpen={openRepo} />
+        }
+      </div>
     </div>
   )
 }

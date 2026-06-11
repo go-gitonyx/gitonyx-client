@@ -29,7 +29,7 @@ export function useGit(repoPath: string) {
   }, [repoPath])
 
   const status = useCallback(() => exec('status', '--porcelain=v2', '--branch'), [exec])
-  const log = useCallback((count = 20) => exec('log', `--max-count=${count}`, '--pretty=format:%H|%an|%at|%D|%s'), [exec])
+  const log = useCallback((count = 20) => exec('log', `--max-count=${count}`, '--topo-order', '--pretty=format:%H|%P|%an|%at|%D|%s'), [exec])
   const currentBranch = useCallback(() => exec('rev-parse', '--abbrev-ref', 'HEAD'), [exec])
   const branches = useCallback(() => exec('branch', '-a', '--format=%(HEAD)|%(refname)|%(refname:short)'), [exec])
   const checkout = useCallback((name: string, isRemote = false) => isRemote ? exec('checkout', '--track', name) : exec('checkout', name), [exec])

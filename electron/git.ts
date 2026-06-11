@@ -22,6 +22,12 @@ export interface FsEntry {
   isDir: boolean
 }
 
+export interface Project {
+  id: string
+  path: string
+  name: string
+}
+
 const ALLOWED_COMMANDS = new Set([
   'status', 'log', 'diff', 'branch', 'checkout', 'add',
   'commit', 'push', 'pull', 'fetch', 'clone', 'init',
@@ -137,6 +143,22 @@ export function registerGitHandlers() {
     } catch {
       return []
     }
+  })
+
+  const projectsDir = () => path.join(os.homedir(), '.gitonyx')
+  const projectsFile = () => path.join(projectsDir(), 'projects.json')
+
+  ipcMain.handle('projects:load', async (): Promise<Project[]> => {
+    try {
+      return JSON.parse(fs.readFileSync(projectsFile(), 'utf8'))
+    } catch {
+      return []
+    }
+  })
+
+  ipcMain.handle('projects:save', async (_event, projects: Project[]) => {
+    fs.mkdirSync(projectsDir(), { recursive: true })
+    fs.writeFileSync(projectsFile(), JSON.stringify(projects))
   })
 
   app.on('will-quit', () => {

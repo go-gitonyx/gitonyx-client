@@ -1,4 +1,4 @@
-import type { GitResult, GitAuthStatus, FsEntry } from '../../electron/git'
+import type { GitResult, GitAuthStatus, FsEntry, Project } from '../../electron/git'
 
 declare global {
   interface Window {
@@ -10,8 +10,10 @@ declare global {
       clearAuth: () => Promise<void>
       authStatus: () => Promise<GitAuthStatus>
       readdir: (dirPath: string) => Promise<FsEntry[]>
+      loadProjects: () => Promise<Project[]>
+      saveProjects: (projects: Project[]) => Promise<void>
     }
   }
 }
 
-export type { FsEntry }
+export type { FsEntry, Project }

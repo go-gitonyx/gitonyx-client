@@ -143,13 +143,15 @@ function parseDecorations(raw: string): CommitRef[] {
 
 export class Commit {
   readonly hash: string
+  readonly parents: string[]
   readonly author: string
   readonly date: Date
   readonly subject: string
   readonly refs: CommitRef[]
 
-  constructor(hash: string, author: string, date: Date, subject: string, refs: CommitRef[] = []) {
+  constructor(hash: string, parents: string[], author: string, date: Date, subject: string, refs: CommitRef[] = []) {
     this.hash = hash
+    this.parents = parents
     this.author = author
     this.date = date
     this.subject = subject
@@ -180,17 +182,20 @@ export class Commit {
     for (const line of raw.split('\n')) {
       if (line.trim().length === 0) continue
 
-      // Format: %H|%an|%at|%D|%s — subject may contain | so join tail
+      // Format: %H|%P|%an|%at|%D|%s — %P is space-separated parent hashes
       const parts = line.split('|')
 
-      if (parts.length < 4) continue
+      if (parts.length < 5) continue
 
-      const [hash, author, timestamp, decoration, ...subjectParts] = parts
+      const [hash, parentStr, author, timestamp, decoration, ...subjectParts] = parts
 
       if (!hash || !timestamp) continue
 
+      const parents = parentStr.trim() ? parentStr.trim().split(' ') : []
+
       commits.push(new Commit(
         hash,
+        parents,
         author,
         new Date(Number(timestamp) * 1000),
         subjectParts.join('|'),
