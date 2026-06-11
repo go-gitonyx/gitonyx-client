@@ -67,7 +67,7 @@ function BranchMenu({ branch, branches, ahead, behind, loading, onCheckout }: { 
 
       {open && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="fixed inset-0 z-9999" onClick={() => setOpen(false)} />
 
           <div className="absolute left-0 top-full mt-2 z-20 w-72 max-h-80 overflow-y-auto rounded-xl bg-surface border border-line shadow-2xl py-1">
             <MenuLabel label="Local branches" />
