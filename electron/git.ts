@@ -67,15 +67,19 @@ function runGit(args: string[], cwd: string): Promise<GitResult> {
   // GIT_TERMINAL_PROMPT=0 makes git fail fast instead of hanging on a
   // credential prompt it can never answer (there is no attached terminal).
   const env: NodeJS.ProcessEnv = { ...process.env, GIT_TERMINAL_PROMPT: '0' }
+  const finalArgs = [...args]
 
   if (auth) {
     env.GIT_ASKPASS = ensureAskPass()
     env.GITONYX_GIT_USERNAME = auth.username
     env.GITONYX_GIT_PASSWORD = auth.password
+    // Prepend -c credential.helper= so system helpers (git-credential-manager,
+    // gnome-keyring, etc.) don't shadow our ASKPASS script.
+    finalArgs.unshift('-c', 'credential.helper=')
   }
 
   return new Promise((resolve) => {
-    const proc = spawn('git', args, { cwd, env })
+    const proc = spawn('git', finalArgs, { cwd, env })
 
     let stdout = ''
     let stderr = ''

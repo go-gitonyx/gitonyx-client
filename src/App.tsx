@@ -23,7 +23,7 @@ interface RepoState {
 const EMPTY_REPO: RepoState = { branch: '', ahead: 0, behind: 0, changes: [], commits: [], branches: [] }
 
 function looksLikeAuthError(stderr: string): boolean {
-  return /authentication failed|could not read username|invalid credentials|access denied|http 40[13]|401|403/i.test(stderr)
+  return /authentication failed|could not read username|invalid credentials|access denied|http 40[13]|401|403|support for password authentication|repository not found|terminal prompts disabled/i.test(stderr)
 }
 
 type LeftTab = 'changes' | 'explorer'

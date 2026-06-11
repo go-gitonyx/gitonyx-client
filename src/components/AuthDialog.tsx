@@ -72,6 +72,12 @@ function AuthForm({ currentUser, onSave, onClear, onClose }: Omit<AuthDialogProp
           />
         </label>
 
+        <p className="text-xs text-slate-500 bg-white/5 rounded-lg px-3 py-2 border border-line">
+          <span className="text-slate-300 font-medium">GitHub:</span> password authentication was removed in 2021.
+          Enter a <span className="font-mono text-primary">Personal Access Token</span> as the password
+          — Settings → Developer settings → Personal access tokens → classic, with <span className="font-mono">repo</span> scope.
+        </p>
+
         <p className="text-xs text-slate-600">Credentials are kept in memory for this session only and are never written to disk.</p>
 
         <div className="flex items-center gap-2">
