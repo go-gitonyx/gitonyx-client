@@ -1,7 +1,7 @@
-import { Icon } from '@iconify/react'
+import { Icon } from "@iconify/react";
 
 interface WelcomeProps {
-  onOpen: () => void
+  onOpen: () => void;
 }
 
 export function Welcome({ onOpen }: WelcomeProps) {
@@ -14,7 +14,10 @@ export function Welcome({ onOpen }: WelcomeProps) {
 
         <div>
           <h1 className="text-2xl font-bold tracking-tight">gitonyx</h1>
-          <p className="text-sm text-slate-400 mt-1">Open a local repository to see its status, stage changes and browse history.</p>
+          <p className="text-sm text-slate-400 mt-1">
+            Open a local repository to see its status, stage changes and browse
+            history.
+          </p>
         </div>
 
         <button
@@ -27,5 +30,5 @@ export function Welcome({ onOpen }: WelcomeProps) {
         </button>
       </div>
     </div>
-  )
+  );
 }
